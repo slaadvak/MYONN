@@ -12,6 +12,7 @@ import numpy
 import Plot
 # scipy.special for the sigmoid function expit()
 import scipy.special
+import scipy.ndimage
 
 
 # neural network class definition
@@ -78,7 +79,7 @@ class NeuralNetwork:
         
         return final_outputs
 
-    def train_dataset(self, data_file, epochs=1):
+    def train_dataset(self, data_file, epochs=1, rotate_left=None, rotate_right=None):
         records_cnt = 0
         for e in range(epochs):
             with open(data_file) as df:
@@ -92,6 +93,19 @@ class NeuralNetwork:
                     # all_values[0] is the target label for this record
                     targets[int(all_values[0])] = 0.99
                     self.train(inputs, targets)
+                    
+                    if rotate_left is not None:
+                        inputs_left = scipy.ndimage.interpolation.rotate(
+                            inputs.reshape(28,28), rotate_left, cval=0.01, order=1, reshape=False)
+                        self.train(inputs_left.reshape(784), targets)
+                        records_cnt += 1
+                        
+                    if rotate_right is not None:
+                        inputs_right = scipy.ndimage.interpolation.rotate(
+                            inputs.reshape(28,28), -rotate_right, cval=0.01, order=1, reshape=False)
+                        self.train(inputs_right.reshape(784), targets)
+                        records_cnt += 1
+                    
                     records_cnt += 1
                     print("Epoch: {} ({})".format(e + 1, records_cnt), end='\r')
 
