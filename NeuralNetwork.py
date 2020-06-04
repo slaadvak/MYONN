@@ -132,10 +132,12 @@ class NeuralNetwork:
         
     def save(self, filename):
         with open(filename, 'wb') as f:
+            print("Saving file '{}'".format(filename))
             numpy.save(f, self.wih)
             numpy.save(f, self.who)
         
     def load(self, filename):
         with open(filename, 'rb') as f:
+            print("Loading file '{}'".format(filename))
             self.wih = numpy.load(f)
             self.who = numpy.load(f)
